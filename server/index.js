@@ -9,12 +9,12 @@ const { exec } = require("child_process");
 
 const app = express();
 
-// CORS setup: Allow Vercel domain to make requests
-const corsOptions = {
-  origin: "https://policy-pal-six.vercel.app", // Vercel frontend domain
-  methods: ["GET", "POST"], // Allow these HTTP methods
-};
-app.use(cors(corsOptions)); // Use this CORS setup instead of the default
+// ✅ CORS fix: Allow frontend from Vercel
+app.use(cors({
+  origin: "https://policy-pal-six.vercel.app",
+  methods: ["GET", "POST"],
+}));
+
 app.use(express.json());
 
 app.get("/", async (req, res) => {
@@ -65,4 +65,4 @@ app.get("/summaries", (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`API running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 API running on port ${PORT}`));
