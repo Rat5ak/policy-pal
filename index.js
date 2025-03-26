@@ -2,15 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
-require("dotenv").config();
-
-const OpenAI = require("openai");
 const puppeteer = require("puppeteer");
+require("dotenv").config();
+const OpenAI = require("openai");
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 const app = express();
-app.use(cors());
+
+app.use(cors({ origin: "https://policy-pal-six.vercel.app" }));
 app.use(express.json());
 
 const urls = [
@@ -20,18 +19,15 @@ const urls = [
   "https://www.reddit.com/r/privacy/",
 ];
 
-// 🔧 Util
 function slugify(url) {
   return url.replace(/[^a-zA-Z0-9]/g, "_");
 }
 
-// 🔍 Scraping and summarizing
 async function scrapeText(url) {
   const browser = await puppeteer.launch({
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
-
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
   const text = await page.evaluate(() => document.body.innerText);
@@ -56,49 +52,47 @@ async function summarize(text) {
 
 async function compareAndSummarize(url) {
   const slug = slugify(url);
-  const snapshotDir = path.join(__dirname, "snapshots");
-  const snapshotPath = path.join(snapshotDir, `${slug}.txt`);
-  const summaryPath = path.join(snapshotDir, `summary_${slug}.txt`);
+  const currentPath = path.join(__dirname, `snapshots/${slug}.txt`);
 
-  if (!fs.existsSync(snapshotDir)) fs.mkdirSync(snapshotDir);
-
+  console.log(`\n🔍 Checking ${url}`);
   const newText = await scrapeText(url);
-  let changed = true;
 
-  if (fs.existsSync(snapshotPath)) {
-    const oldText = fs.readFileSync(snapshotPath, "utf-8");
+  let changed = true;
+  if (fs.existsSync(currentPath)) {
+    const oldText = fs.readFileSync(currentPath, "utf-8");
     changed = newText.trim() !== oldText.trim();
   }
 
   if (!changed) {
-    console.log(`✅ No changes detected for ${url}`);
+    console.log(`✅ No changes for ${url}`);
     return;
   }
 
-  console.log(`⚠️ Change detected! Re-summarizing...`);
+  console.log(`⚠️ Change detected!`);
   const summary = await summarize(newText);
 
-  fs.writeFileSync(snapshotPath, newText);
-  fs.writeFileSync(summaryPath, summary);
-  console.log(`✅ Summary updated: ${summaryPath}`);
+  fs.writeFileSync(currentPath, newText);
+  fs.writeFileSync(path.join(__dirname, `summary_${slug}.txt`), summary);
+  console.log(`✅ Summary updated for ${url}`);
 }
 
-// 🎯 Routes
+// 🚀 POST /scrape-now
 app.post("/scrape-now", async (req, res) => {
   try {
     for (const url of urls) {
       await compareAndSummarize(url);
     }
-    res.json({ message: "Scraping complete." });
+    res.json({ message: "Scrape completed" });
   } catch (err) {
-    console.error("❌ Scraping error:", err);
-    res.status(500).json({ error: "Scraping failed." });
+    console.error("❌ Scrape error:", err);
+    res.status(500).json({ error: "Scraping failed" });
   }
 });
 
+// 📄 GET /summary/:slug
 app.get("/summary/:slug", (req, res) => {
   const slug = req.params.slug;
-  const filePath = path.join(__dirname, `snapshots/summary_${slug}.txt`);
+  const filePath = path.join(__dirname, `summary_${slug}.txt`);
 
   if (!fs.existsSync(filePath)) {
     return res.status(404).json({ error: "Summary not found" });
@@ -108,19 +102,16 @@ app.get("/summary/:slug", (req, res) => {
   res.send(content);
 });
 
+// 🗂️ GET /summaries
 app.get("/summaries", (req, res) => {
-  const dir = path.join(__dirname, "snapshots");
-  if (!fs.existsSync(dir)) return res.json([]);
-
-  const files = fs.readdirSync(dir).filter(f => f.startsWith("summary_"));
+  const files = fs.readdirSync(__dirname).filter(f => f.startsWith("summary_") && f.endsWith(".txt"));
   const summaries = files.map(file => {
     const slug = file.replace("summary_", "").replace(".txt", "");
     const title = slug.replace(/https?_+/g, "").replace(/_+/g, " ").trim();
     return { slug, title };
   });
-
   res.json(summaries);
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`🧠 API running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 API listening on ${PORT}`));
