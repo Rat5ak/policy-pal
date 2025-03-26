@@ -5,28 +5,30 @@ function App() {
   const [summaries, setSummaries] = useState([]);
   const [status, setStatus] = useState("");
 
+  const backendURL = "https://scraper-production-5468.up.railway.app";
+
   const fetchSummaries = async () => {
     try {
-      const res = await axios.get("https://policy-pal-production.up.railway.app/summaries");
-  
+      const res = await axios.get(`${backendURL}/summaries`);
+
       const fullSummaries = await Promise.all(res.data.map(async ({ slug, title }) => {
         try {
-          const summaryRes = await axios.get(`https://policy-pal-production.up.railway.app/summary/${slug}`);
+          const summaryRes = await axios.get(`${backendURL}/summary/${slug}`);
           return { title, summary: summaryRes.data };
         } catch {
           return { title, summary: "⚠️ Failed to fetch summary." };
         }
       }));
-  
+
       setSummaries(fullSummaries);
     } catch (err) {
       console.error("❌ Failed to load summaries", err);
     }
   };
-  
+
   const triggerScrape = () => {
     setStatus("Scraping...");
-    axios.post("https://policy-pal-production.up.railway.app/scrape-now")
+    axios.post(`${backendURL}/scrape-now`)
       .then(() => {
         setStatus("Scrape complete. Updating summaries...");
         setTimeout(() => {
