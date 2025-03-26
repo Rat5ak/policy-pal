@@ -52,7 +52,50 @@ async function summarize(text) {
   const maxCharLength = 300000;
   const safeText = text.length > maxCharLength ? text.slice(0, maxCharLength) : text;
 
-  const prompt = `Summarize this privacy policy. Focus on data collection, usage, permissions, sharing, and anything noteworthy:\n\n${safeText}`;
+  const prompt = `
+You are an AI that summarizes privacy policies into clear, consistent, and easy-to-read sections.
+
+Always use the following exact structure and Markdown formatting:
+
+---
+
+## 🔍 Summary  
+Give a 1–2 sentence neutral overview of the company’s privacy approach.
+
+---
+
+## 📥 Data Collected  
+- What kinds of data? (e.g. name, email, location, usage, device, etc.)
+
+---
+
+## 🎯 How Data Is Used  
+- Ads? Personalization? Analytics? Security? Be direct.
+
+---
+
+## 🔗 Data Sharing  
+- With partners, law enforcement, or third parties? Any red flags?
+
+---
+
+## ⚙️ User Controls & Rights  
+- Can users access, download, delete, or limit their data?
+
+---
+
+## 🕒 Retention & Storage  
+- How long is data stored? Is it transferred internationally?
+
+---
+
+## 🚨 Noteworthy Points  
+Highlight any unique, shady, or especially transparent aspects.
+
+---
+
+Here is the full privacy policy text to summarize:\n\n${safeText}
+`;
 
   const response = await openai.chat.completions.create({
     model: "gpt-4o",
@@ -62,6 +105,7 @@ async function summarize(text) {
 
   return response.choices[0].message.content;
 }
+
 
 async function compareAndSummarize(url) {
   const slug = slugify(url);
