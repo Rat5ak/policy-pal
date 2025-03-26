@@ -8,7 +8,13 @@ const summarizePolicy = require("./openai");
 const { exec } = require("child_process");
 
 const app = express();
-app.use(cors());
+
+// CORS setup: Allow Vercel domain to make requests
+const corsOptions = {
+  origin: "https://policy-pal-six.vercel.app", // Vercel frontend domain
+  methods: ["GET", "POST"], // Allow these HTTP methods
+};
+app.use(cors(corsOptions)); // Use this CORS setup instead of the default
 app.use(express.json());
 
 app.get("/", async (req, res) => {
