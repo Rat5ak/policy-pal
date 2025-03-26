@@ -11,7 +11,7 @@ const app = express();
 
 // CORS setup: Allow Vercel domain to make requests
 const corsOptions = {
-  origin: "*, // Vercel frontend domain
+  origin: "https://policy-pal-six.vercel.app", // Vercel frontend domain
   methods: ["GET", "POST"], // Allow these HTTP methods
 };
 app.use(cors(corsOptions)); // Use this CORS setup instead of the default
