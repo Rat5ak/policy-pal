@@ -2,39 +2,92 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 function App() {
-  const [summary, setSummary] = useState("Loading...");
-  const [error, setError] = useState(null);
+  const [summaries, setSummaries] = useState([]);
+  const [status, setStatus] = useState("");
+
+  const fetchSummaries = async () => {
+    try {
+      const res = await axios.get("http://localhost:3001/summaries");
+
+      const fullSummaries = await Promise.all(res.data.map(async ({ slug, title }) => {
+        try {
+          const summaryRes = await axios.get(`http://localhost:3001/summary/${slug}`);
+          return { title, summary: summaryRes.data };
+        } catch {
+          return { title, summary: "⚠️ Failed to fetch summary." };
+        }
+      }));
+
+      setSummaries(fullSummaries);
+    } catch (err) {
+      console.error("❌ Failed to load summaries", err);
+    }
+  };
 
   useEffect(() => {
-    axios.get("https://policy-pal-production.up.railway.app/") // your backend
-      .then(res => setSummary(res.data))
-      .catch(() => setError("Failed to fetch summary."));
+    fetchSummaries();
   }, []);
 
+  const triggerScrape = () => {
+    setStatus("Scraping...");
+    axios.post("http://localhost:3001/scrape-now")
+      .then(() => {
+        setStatus("Scrape complete. Updating summaries...");
+        setTimeout(() => {
+          fetchSummaries();
+          setStatus("");
+        }, 1500);
+      })
+      .catch(() => {
+        setStatus("Scrape failed.");
+      });
+  };
+
   return (
-    <div
-      style={{
-        backgroundColor: "#1e1e1e",
-        color: "#f5f5f5",
-        minHeight: "100vh",
-        padding: "2rem",
-        fontFamily: "monospace",
-      }}
-    >
+    <div style={{
+      backgroundColor: "#1e1e1e",
+      color: "#f5f5f5",
+      minHeight: "100vh",
+      padding: "2rem",
+      fontFamily: "monospace",
+    }}>
       <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>🕵️ PolicyPal</h1>
-      <h3 style={{ color: "#89ddff" }}>AI Summary:</h3>
-      <pre
-        style={{
-          backgroundColor: "#2d2d2d",
-          padding: "1rem",
-          borderRadius: "0.5rem",
-          overflowX: "auto",
-          whiteSpace: "pre-wrap",
-          wordWrap: "break-word",
-        }}
-      >
-        {error || summary}
-      </pre>
+
+      <div style={{ marginBottom: "2rem" }}>
+        <button
+          onClick={triggerScrape}
+          style={{
+            padding: "0.5rem 1rem",
+            borderRadius: "0.4rem",
+            border: "none",
+            backgroundColor: "#89ddff",
+            color: "#000",
+            fontWeight: "bold",
+            cursor: "pointer",
+          }}
+        >
+          Scrape Now
+        </button>
+        {status && (
+          <span style={{ marginLeft: "1rem", color: "#ccc" }}>{status}</span>
+        )}
+      </div>
+
+      {summaries.map(({ title, summary }, i) => (
+        <div key={i} style={{ marginBottom: "2rem" }}>
+          <h2 style={{ color: "#ffcb6b" }}>{title}</h2>
+          <pre style={{
+            backgroundColor: "#2d2d2d",
+            padding: "1rem",
+            borderRadius: "0.5rem",
+            overflowX: "auto",
+            whiteSpace: "pre-wrap",
+            wordWrap: "break-word",
+          }}>
+            {summary}
+          </pre>
+        </div>
+      ))}
     </div>
   );
 }

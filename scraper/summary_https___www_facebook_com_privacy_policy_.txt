@@ -1,9 +1,0 @@
-The privacy policy provides an overview of the data practices at Meta. Meta collects user information dependent on their use of the products. This collected data includes user activities and the information provided by the users, information from friends, followers, and connections, app, browser, and device information, as well as information from partners, vendors, and other third parties. 
-
-If a user decides to not allow some information collection, experiences might be altered. Meta also collects data that doesn't identify individuals, which is anonymized or aggregated by third parties. The collected data is used to provide and personalize products, show ads, ensure safety and security, provide business services, communicate with users, and conduct research for social good. 
-
-Meta does not sell user information to third parties but shares it with partners, advertisers, integrated partners, vendors, service providers, and external researchers. Also, in certain circumstances, user information could be shared as a result of legal requests or during the transfer or sell of business. 
-
-Meta shares user information across its companies to enhance user experience. Users have the right and tools to manage, download, and delete their information. The company retains user information for durations that depend on its necessity for product provision, legal obligations, or safety and security needs. 
-
-They transfer information between countries and respond to legal requests and to prevent harm. Users will be notified of major upcoming changes to the privacy policy, and they have different avenues through which they can contact Meta.

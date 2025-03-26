@@ -5,9 +5,12 @@ const OpenAI = require("openai");
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const urls = [
-  "https://www.facebook.com/privacy/policy/",
-  "https://zoom.us/privacy",
-];
+    "https://www.bbc.com/news",
+    "https://edition.cnn.com",
+    "https://techcrunch.com",
+    "https://www.reddit.com/r/privacy/",
+  ];
+  
 
 function slugify(url) {
   return url.replace(/[^a-zA-Z0-9]/g, "_");
@@ -23,15 +26,20 @@ async function scrapeText(url) {
 }
 
 async function summarize(text) {
-  const prompt = `Summarize this privacy policy. Focus on data collection, usage, permissions, sharing, and anything noteworthy:\n\n${text}`;
+    const maxCharLength = 300000; // ~100k tokens safe
+    const safeText = text.length > maxCharLength ? text.slice(0, maxCharLength) : text;
+  
+    const prompt = `Summarize this privacy policy. Focus on data collection, usage, permissions, sharing, and anything noteworthy:\n\n${safeText}`;
+  
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 16384,
+    });
+  
+    return response.choices[0].message.content;
+  }
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [{ role: "user", content: prompt }],
-  });
-
-  return response.choices[0].message.content;
-}
 
 async function compareAndSummarize(url) {
   const slug = slugify(url);
