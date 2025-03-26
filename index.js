@@ -19,6 +19,12 @@ const urls = [
   "https://www.reddit.com/r/privacy/",
 ];
 
+// ✅ Ensure snapshots folder exists
+const snapshotsDir = path.join(__dirname, "snapshots");
+if (!fs.existsSync(snapshotsDir)) {
+  fs.mkdirSync(snapshotsDir);
+}
+
 function slugify(url) {
   return url.replace(/[^a-zA-Z0-9]/g, "_");
 }
@@ -113,5 +119,5 @@ app.get("/summaries", (req, res) => {
   res.json(summaries);
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`🚀 API listening on ${PORT}`));
