@@ -13,11 +13,18 @@ app.use(cors({ origin: "https://policy-pal-six.vercel.app" }));
 app.use(express.json());
 
 const urls = [
-  "https://www.bbc.com/news",
-  "https://edition.cnn.com",
-  "https://techcrunch.com",
-  "https://www.reddit.com/r/privacy/",
+  "https://www.facebook.com/policy.php",
+  "https://help.instagram.com/519522125107875",
+  "https://x.com/en/privacy",
+  "https://www.linkedin.com/legal/privacy-policy",
+  "https://values.snap.com/privacy/privacy-policy",
+  "https://www.tiktok.com/legal/page/us/privacy-policy/en",
+  "https://policies.google.com/privacy?hl=en-US",
+  "https://www.reddit.com/policies/privacy-policy",
+  "https://policy.pinterest.com/en/privacy-policy",
+  "https://www.whatsapp.com/legal/privacy-policy",
 ];
+
 
 // ✅ Ensure snapshots folder exists
 const snapshotsDir = path.join(__dirname, "snapshots");
