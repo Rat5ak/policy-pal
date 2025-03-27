@@ -163,18 +163,17 @@ app.get("/summary/:slug", (req, res) => {
 app.get("/summaries", (req, res) => {
   const files = fs.readdirSync(__dirname).filter(f => f.startsWith("summary_") && f.endsWith(".txt"));
 
-  // Hardcoded title map
   const titleMap = {
-    "www_facebook_com_policy_php": "Facebook",
-    "help_instagram_com_519522125107875": "Instagram",
-    "x_com_en_privacy": "X (Twitter)",
-    "www_linkedin_com_legal_privacy_policy": "LinkedIn",
-    "values_snap_com_privacy_privacy_policy": "Snapchat",
-    "www_tiktok_com_legal_page_us_privacy_policy_en": "TikTok",
-    "policies_google_com_privacy_hl_en_US": "Google",
-    "www_reddit_com_policies_privacy_policy": "Reddit",
-    "policy_pinterest_com_en_privacy_policy": "Pinterest",
-    "www_whatsapp_com_legal_privacy_policy": "WhatsApp",
+    "https___www_facebook_com_policy_php": "Facebook",
+    "https___help_instagram_com_519522125107875": "Instagram",
+    "https___x_com_en_privacy": "X (Twitter)",
+    "https___www_linkedin_com_legal_privacy_policy": "LinkedIn",
+    "https___values_snap_com_privacy_privacy_policy": "Snapchat",
+    "https___www_tiktok_com_legal_page_us_privacy_policy_en": "TikTok",
+    "https___policies_google_com_privacy_hl_en_US": "Google",
+    "https___www_reddit_com_policies_privacy_policy": "Reddit",
+    "https___policy_pinterest_com_en_privacy_policy": "Pinterest",
+    "https___www_whatsapp_com_legal_privacy_policy": "WhatsApp",
   };
 
   const summaries = files.map(file => {
@@ -189,7 +188,6 @@ app.get("/summaries", (req, res) => {
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`🚀 API listening on ${PORT}`));
 
-
 // Run scraping every 15 minutes
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
@@ -201,8 +199,5 @@ async function runScheduledScrape() {
   console.log("✅ Scheduled scrape complete.");
 }
 
-// Kick it off once at startup
 runScheduledScrape();
-
-// Repeat every 15 minutes
 setInterval(runScheduledScrape, FIFTEEN_MINUTES);
