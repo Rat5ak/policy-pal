@@ -172,3 +172,21 @@ app.get("/summaries", (req, res) => {
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`🚀 API listening on ${PORT}`));
+
+
+// Run scraping every 15 minutes
+const FIFTEEN_MINUTES = 15 * 60 * 1000;
+
+async function runScheduledScrape() {
+  console.log("⏱️ Running scheduled scrape...");
+  for (const url of urls) {
+    await compareAndSummarize(url);
+  }
+  console.log("✅ Scheduled scrape complete.");
+}
+
+// Kick it off once at startup
+runScheduledScrape();
+
+// Repeat every 15 minutes
+setInterval(runScheduledScrape, FIFTEEN_MINUTES);
