@@ -29,11 +29,7 @@ function App() {
       }
     };
 
-    fetchSummaries(); // Initial fetch
-
-    const interval = setInterval(fetchSummaries, 45000); // Auto-refresh every 45 seconds
-
-    return () => clearInterval(interval); // Clean up on unmount
+    fetchSummaries();
   }, []);
 
   return (
@@ -80,16 +76,31 @@ function App() {
             <h2 style={{ color: "#ffcb6b", fontSize: "1.5rem", marginBottom: "1rem" }}>
               {activeSummary.title}
             </h2>
-            <pre style={{
-              backgroundColor: "#2d2d2d",
-              padding: "1rem",
-              borderRadius: "0.5rem",
-              overflowX: "auto",
-              whiteSpace: "pre-wrap",
-              wordWrap: "break-word",
-            }}>
-              {activeSummary.summary}
-            </pre>
+            {
+              activeSummary.summary.includes("⚠️ This policy could not be scraped") ? (
+                <div style={{
+                  backgroundColor: "#444",
+                  padding: "1rem",
+                  borderRadius: "0.5rem",
+                  border: "1px solid #888",
+                  fontSize: "1rem",
+                }}>
+                  ⚠️ This policy could not be scraped due to network restrictions, bot blocking, or missing content.  
+                  Please try again later or check manually.
+                </div>
+              ) : (
+                <pre style={{
+                  backgroundColor: "#2d2d2d",
+                  padding: "1rem",
+                  borderRadius: "0.5rem",
+                  overflowX: "auto",
+                  whiteSpace: "pre-wrap",
+                  wordWrap: "break-word",
+                }}>
+                  {activeSummary.summary}
+                </pre>
+              )
+            }
           </>
         ) : (
           <p style={{ color: "#888" }}>Loading summary...</p>
