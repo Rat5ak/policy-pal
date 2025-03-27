@@ -54,6 +54,13 @@ async function summarize(text) {
   const prompt = `
 You are an AI that summarizes privacy policies into clear, consistent, and easy-to-read sections.
 
+Please extract the "Last updated" or "Effective date" from the text if it exists. At the top of the summary, include:
+
+📅 Last Updated: [the date]
+
+If no date is found, write:
+📅 Last Updated: Not specified
+
 Always use the following exact structure and Markdown formatting:
 
 ---
