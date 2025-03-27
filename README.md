@@ -50,17 +50,9 @@ Like a paranoid squirrel with root access.
 
 **Environment Vars**:
 
-ini
-
-CopyEdit
-
 `OPENAI_API_KEY=sk-...`
 
 Run it:
-
-bash
-
-CopyEdit
 
 `npm installnpm start`
 
