@@ -54,10 +54,10 @@ You are an AI that summarizes privacy policies into clear, consistent, and easy-
 
 Please extract the "Last updated" or "Effective date" from the text if it exists. At the top of the summary, include:
 
-📅 Last Updated: [the date]
+🗕️ Last Updated: [the date]
 
 If no date is found, write:
-📅 Last Updated: Not specified
+🗕️ Last Updated: Not specified
 
 If you are unable to access any meaningful content, generate a fallback summary that includes this warning:
 
@@ -111,7 +111,35 @@ Here is the full privacy policy text to summarize:\n\n${safeText}
     max_tokens: 16384,
   });
 
-  return response.choices[0].message.content;
+  const summary = response.choices[0].message.content;
+  const reviewed = await reviewSummary(summary);
+  return reviewed;
+}
+
+async function reviewSummary(summaryText) {
+  const reviewPrompt = `
+You are a second AI reviewing a privacy policy summary for clarity, correctness, and completeness.
+
+If the summary contains the fallback warning "This policy could not be scraped...", do NOT modify anything.
+
+Otherwise, validate each section matches the expected structure and content. If any section is vague, missing, or lacks detail, provide a corrected version of the entire summary, improving where necessary.
+
+If the summary is excellent and requires no changes, respond with:
+✅ Approved
+
+Here is the summary to review:
+
+${summaryText}
+`;
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [{ role: "user", content: reviewPrompt }],
+    max_tokens: 16384,
+  });
+
+  const result = response.choices[0].message.content.trim();
+  return result === "✅ Approved" ? summaryText : result;
 }
 
 async function compareAndSummarize(url) {
@@ -131,9 +159,7 @@ async function compareAndSummarize(url) {
   let forceRetry = false;
   if (fs.existsSync(summaryPath)) {
     const previousSummary = fs.readFileSync(summaryPath, "utf-8");
-    if (previousSummary.includes(failedMarker)) {
-      forceRetry = true;
-    }
+    if (previousSummary.includes(failedMarker)) forceRetry = true;
   }
 
   if (!changed && !forceRetry) {
@@ -143,13 +169,11 @@ async function compareAndSummarize(url) {
 
   console.log(`⚠️ Change detected or previous summary failed. Re-summarizing...`);
   const summary = await summarize(newText);
-
   fs.writeFileSync(currentPath, newText);
   fs.writeFileSync(summaryPath, summary);
   console.log(`✅ Summary updated for ${url}`);
 }
 
-// POST /scrape-now
 app.post("/scrape-now", async (req, res) => {
   res.json({ message: "Scrape started" });
   for (const url of urls) {
@@ -162,7 +186,6 @@ app.post("/scrape-now", async (req, res) => {
   console.log("✅ All scrapes finished");
 });
 
-// GET /summary/:slug
 app.get("/summary/:slug", (req, res) => {
   const slug = req.params.slug;
   const filePath = path.join(__dirname, `summary_${slug}.txt`);
@@ -171,7 +194,6 @@ app.get("/summary/:slug", (req, res) => {
   res.send(content);
 });
 
-// GET /summaries
 app.get("/summaries", (req, res) => {
   const files = fs.readdirSync(__dirname).filter(f => f.startsWith("summary_") && f.endsWith(".txt"));
 
@@ -200,7 +222,6 @@ app.get("/summaries", (req, res) => {
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`🚀 API listening on ${PORT}`));
 
-// Scheduled scrape every 15 mins
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
 const RETRY_FAILED_EVERY = 56 * 1000;
 
@@ -212,7 +233,6 @@ async function runScheduledScrape() {
   console.log("✅ Scheduled scrape complete.");
 }
 
-// Retry any failed summaries separately
 async function retryFailedSummaries() {
   for (const url of urls) {
     const slug = slugify(url);
