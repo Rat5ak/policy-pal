@@ -1,14 +1,13 @@
 # 🕵️ PolicyPal
 
 *"ME PRESS BUTTON. FIND PRIVACY LIES."*  
-– Ancient Internet Wisdom, circa 2025
+— Ancient Internet Wisdom, circa 2025
 
-**PolicyPal** is your digital spear for hunting down changes in privacy policies from your favorite data-hoarding platforms.
+PolicyPal is your digital spear 🗡️ for hunting updates in privacy policies across your favorite data-hoarding platforms.
 
 Except now...  
-There is no button.  
-The machine just runs.  
-Every 15 minutes.  
+There **is no button.**  
+The machine awakens **every 15 minutes.**  
 Silently.  
 Efficiently.  
 Like a paranoid squirrel with root access.
@@ -17,106 +16,105 @@ Like a paranoid squirrel with root access.
 
 ## 💡 What It Does
 
-🧠 **Scrapes** privacy policies from the biggest platforms  
-🔍 **Checks for changes** using snapshot comparison  
-📝 **Re-generates summaries** using GPT-4o **only when needed**  
-📁 **Stores summaries** and raw snapshots as `.txt` files  
-🌐 **Serves summaries** via API to a React frontend  
-🕒 **Auto-updates** every 15 minutes (no button smashing needed anymore)
+🧠 Scrapes privacy policies from surveillance-heavy platforms  
+🔍 Compares current vs previous snapshots  
+📝 Re-summarizes with GPT-4o **only when something changes**  
+📁 Stores raw policies and summaries in `.txt` files  
+📦 Serves clean Markdown summaries to a React frontend  
+🕒 Auto-updates every 15 minutes (**no cron job**, no clicky rituals)
 
 * * *
 
 ## ✨ Why This Exists
 
-- Because privacy policies are a wall of legal sadness
-    
-- Because you *should* know who’s watching
-    
-- Because your inner caveman deserves dignity and **automated surveillance of the surveillance**
-    
+Because privacy policies are legal obfuscation in Helvetica.  
+Because your data shouldn't be fuel for the ad gods.  
+Because your inner caveman deserves automated vigilance.
 
 * * *
 
 ## 🔧 Setup
 
-**Backend**: Node.js + Express + Puppeteer + OpenAI  
-**Frontend**: Vite + React (hosted on Vercel)  
-**Deployment**:
+**Backend:** Node.js + Express + Puppeteer + OpenAI  
+**Frontend:** Vite + React (hosted on Vercel)  
+**Deployment:**
 
-- Backend: [Railway](https://railway.app)
+- Backend: Railway
     
-- Frontend: [Vercel](https://vercel.com)
+- Frontend: Vercel
     
 
-**Environment Vars**:
+**Environment Variable:**
 
 `OPENAI_API_KEY=sk-...`
 
-Run it:
+**Run It Locally:**
 
-`npm installnpm start`
+`npm install npm start`
 
 * * *
 
 ## 🕸️ Tracked Platforms
 
-We currently monitor policies from:
+PolicyPal currently watches the watchers at:
 
-- **Facebook**
+- Facebook
     
-- **Instagram**
+- Instagram
     
-- **X (Twitter)**
+- X (formerly Twitter, now just entropy)
     
-- **LinkedIn**
+- LinkedIn
     
-- **Snapchat**
+- Snapchat
     
-- **TikTok**
+- TikTok
     
-- **Google**
+- Google
     
-- **Reddit**
+- Reddit
     
-- **Pinterest**
+- Pinterest
     
-- **WhatsApp**
+- WhatsApp
     
 
-Wanna add more?  
-Open `index.js`, chuck it in the `urls` array, and that’s it.  
-No deploy button. It’ll start monitoring like the little daemon it is.
+**Want to monitor more?**  
+Just drop the URL into the `urls` array in `index.js`.  
+That's it.  
+**It will begin watching.** 👁️
 
 * * *
 
 ## 🧠 How Smart Is It?
 
-- ✅ **Snapshot-aware**: Only scrapes and re-summarizes if something has changed.
-    
-- ✅ **Hardcoded titles**: No weird slugs or gibberish. Just clean names like “Google” and “Facebook.”
-    
-- ✅ **No frontend button anymore**: Summaries auto-load from existing `.txt` files.
-    
-- ✅ **Runs on a timer**: 15-minute scraping interval like clockwork. 
-    
+✅ **Snapshot-aware** – Re-summarizes only when content changes  
+✅ **Hardcoded titles** – No slug soup, just names you recognize  
+✅ **Buttonless** – Frontend pulls straight from the latest `.txt` summaries  
+✅ **SetInterval Overlord** – Scrapes every 15 mins, rain or shine
 
 * * *
 
 ## ⚠️ Disclaimer
 
-This is not legal advice.  
-It’s not even good advice.  
-It’s a VIBES-ONLY SERVICE for sniffing corporate behavior.
+Not legal advice.  
+Not compliance advice.  
+Not even *advice*, really.  
+Just **vibes**, surveillance of the surveillance, and Markdown.
 
 * * *
 
 ## 🪓 Special Thanks
 
-🦍 Human muscle memory  
-🧠 GPT for making legalese sound readable  
-🛠️ Railway + Vercel for making deploys feel like magic  
+🦴 Neanderthal brain for loving button presses  
+🧠 OpenAI for decoding corporate bullshit  
+💻 Railway + Vercel for painless deploys  
+💡 Curiosity, caffeine, and mild distrust of all Terms & Conditions
 
 * * *
 
-Built with spite, curiosity, caffeine, and a small amount of dignity.  
-**You don’t press the button anymore. The button presses *itself*.**
+Built in 2025.  
+By humans.  
+**For humans.**  
+The button presses itself now.  
+Sleep easy. Or don't.
