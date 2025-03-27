@@ -42,7 +42,7 @@ async function scrapeText(url) {
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
-  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
+  await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
   const text = await page.evaluate(() => document.body.innerText);
   await browser.close();
   return text;
