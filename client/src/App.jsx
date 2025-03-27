@@ -31,7 +31,7 @@ function App() {
 
     fetchSummaries(); // Initial fetch
 
-    const interval = setInterval(fetchSummaries, 60000); // Auto-refresh every 60 seconds
+    const interval = setInterval(fetchSummaries, 45000); // Auto-refresh every 45 seconds
 
     return () => clearInterval(interval); // Clean up on unmount
   }, []);
