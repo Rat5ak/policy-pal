@@ -162,26 +162,27 @@ app.get("/summary/:slug", (req, res) => {
 // 🗂️ GET /summaries
 app.get("/summaries", (req, res) => {
   const files = fs.readdirSync(__dirname).filter(f => f.startsWith("summary_") && f.endsWith(".txt"));
+
+  // Hardcoded title map
+  const titleMap = {
+    "www_facebook_com_policy_php": "Facebook",
+    "help_instagram_com_519522125107875": "Instagram",
+    "x_com_en_privacy": "X (Twitter)",
+    "www_linkedin_com_legal_privacy_policy": "LinkedIn",
+    "values_snap_com_privacy_privacy_policy": "Snapchat",
+    "www_tiktok_com_legal_page_us_privacy_policy_en": "TikTok",
+    "policies_google_com_privacy_hl_en_US": "Google",
+    "www_reddit_com_policies_privacy_policy": "Reddit",
+    "policy_pinterest_com_en_privacy_policy": "Pinterest",
+    "www_whatsapp_com_legal_privacy_policy": "WhatsApp",
+  };
+
   const summaries = files.map(file => {
     const slug = file.replace("summary_", "").replace(".txt", "");
-    let title = slug;
-  
-    // Try to make it readable
-    title = title.replace(/https?_+www_+/g, "");
-    title = title.replace(/https?_+/g, "");
-    title = title.replace(/_/g, " ");
-    title = title.replace(/com/g, ".com");
-    title = title.replace(/en us/g, "US");
-    title = title.replace(/\s+/g, " ").trim();
-  
-    // Capitalize first letter of each word
-    title = title
-      .split(" ")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  
+    const title = titleMap[slug] || slug;
     return { slug, title };
-  });  
+  });
+
   res.json(summaries);
 });
 
