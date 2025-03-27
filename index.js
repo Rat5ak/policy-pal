@@ -55,7 +55,7 @@ async function summarize(text) {
   const prompt = `
 You are an AI that summarizes privacy policies into clear, consistent, and easy-to-read sections.
 
-Always use the following exact structure and Markdown formatting:
+Use **this exact format** and Markdown styling for every summary. Do not invent extra sections or omit any. Stick to the structure:
 
 ---
 
@@ -94,7 +94,7 @@ Highlight any unique, shady, or especially transparent aspects.
 
 ---
 
-Here is the full privacy policy text to summarize:\n\n${safeText}
+Summarize the following privacy policy text using this format:\n\n${safeText}
 `;
 
   const response = await openai.chat.completions.create({
@@ -105,7 +105,6 @@ Here is the full privacy policy text to summarize:\n\n${safeText}
 
   return response.choices[0].message.content;
 }
-
 
 async function compareAndSummarize(url) {
   const slug = slugify(url);
