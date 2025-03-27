@@ -3,7 +3,7 @@ import axios from "axios";
 
 function App() {
   const [summaries, setSummaries] = useState([]);
-  const [openIndex, setOpenIndex] = useState(null);
+  const [activeSummary, setActiveSummary] = useState(null);
   const backendURL = "https://scraper-production-5468.up.railway.app";
 
   useEffect(() => {
@@ -23,6 +23,7 @@ function App() {
         );
 
         setSummaries(fullSummaries);
+        setActiveSummary(fullSummaries[0]); // Load first by default
       } catch (err) {
         console.error("❌ Failed to load summaries", err);
       }
@@ -31,56 +32,65 @@ function App() {
     fetchSummaries();
   }, []);
 
-  const toggle = (index) => {
-    setOpenIndex(prev => prev === index ? null : index);
-  };
-
   return (
     <div style={{
       backgroundColor: "#1e1e1e",
       color: "#f5f5f5",
       minHeight: "100vh",
-      padding: "2rem",
       fontFamily: "monospace",
-      maxWidth: "900px",
-      margin: "0 auto"
+      display: "flex",
     }}>
-      <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>🕵️ PolicyPal</h1>
-
-      {summaries.map(({ title, summary }, i) => (
-        <div key={i} style={{ marginBottom: "1rem", border: "1px solid #333", borderRadius: "0.5rem" }}>
+      {/* Sidebar */}
+      <div style={{
+        width: "250px",
+        padding: "1rem",
+        backgroundColor: "#121212",
+        borderRight: "1px solid #333",
+      }}>
+        <h1 style={{ fontSize: "1.5rem", marginBottom: "1.5rem" }}>🕵️ PolicyPal</h1>
+        {summaries.map(({ title, summary }, i) => (
           <button
-            onClick={() => toggle(i)}
+            key={i}
+            onClick={() => setActiveSummary({ title, summary })}
             style={{
               width: "100%",
-              textAlign: "left",
-              backgroundColor: "#2d2d2d",
-              padding: "1rem",
-              fontWeight: "bold",
+              marginBottom: "0.5rem",
+              padding: "0.5rem",
+              backgroundColor: activeSummary?.title === title ? "#333" : "#1e1e1e",
               color: "#ffcb6b",
-              border: "none",
-              borderRadius: "0.5rem 0.5rem 0 0",
-              cursor: "pointer"
+              border: "1px solid #333",
+              borderRadius: "0.3rem",
+              cursor: "pointer",
+              textAlign: "left",
             }}
           >
-            {openIndex === i ? `▼ ${title}` : `▶ ${title}`}
+            {title}
           </button>
+        ))}
+      </div>
 
-          {openIndex === i && (
+      {/* Summary panel */}
+      <div style={{ flex: 1, padding: "2rem", overflowY: "auto" }}>
+        {activeSummary ? (
+          <>
+            <h2 style={{ color: "#ffcb6b", fontSize: "1.5rem", marginBottom: "1rem" }}>
+              {activeSummary.title}
+            </h2>
             <pre style={{
               backgroundColor: "#2d2d2d",
               padding: "1rem",
-              borderRadius: "0 0 0.5rem 0.5rem",
+              borderRadius: "0.5rem",
               overflowX: "auto",
               whiteSpace: "pre-wrap",
               wordWrap: "break-word",
-              borderTop: "1px solid #444"
             }}>
-              {summary}
+              {activeSummary.summary}
             </pre>
-          )}
-        </div>
-      ))}
+          </>
+        ) : (
+          <p style={{ color: "#888" }}>Loading summary...</p>
+        )}
+      </div>
     </div>
   );
 }
