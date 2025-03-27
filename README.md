@@ -1,122 +1,130 @@
 # 🕵️ PolicyPal
 
-**"ME PRESS BUTTON. FIND PRIVACY LIES."**  
+*"ME PRESS BUTTON. FIND PRIVACY LIES."*  
 – Ancient Internet Wisdom, circa 2025
 
-PolicyPal is a tool for **monitoring and summarizing privacy policies** from your favorite data-hungry platforms.
+**PolicyPal** is your digital spear for hunting down changes in privacy policies from your favorite data-hoarding platforms.
 
-You click a single button. It scrapes all the big sites.  
-If anything has changed? Boom. You get the new summaries.  
-If not? You still feel important.
+Except now...  
+There is no button.  
+The machine just runs.  
+Every 15 minutes.  
+Silently.  
+Efficiently.  
+Like a paranoid squirrel with root access.
 
 * * *
 
 ## 💡 What It Does
 
-- 🧠 Scrapes privacy policies from the most-used social platforms
-    
-- 🔍 Checks for changes since the last run
-    
-- 📝 If changed, re-generates a fancy AI summary using GPT-4o
-    
-- 📁 Saves everything in `.txt` files on the backend
-    
-- 🚨 You press the “Scrape Now” button and feel powerful
-    
-- 💬 React frontend displays the latest summaries
-    
-- 🕒 Optional cron job on Railway runs every 6 hours (so it works even when you’re asleep or distracted by a shiny rock)
-    
+🧠 **Scrapes** privacy policies from the biggest platforms  
+🔍 **Checks for changes** using snapshot comparison  
+📝 **Re-generates summaries** using GPT-4o **only when needed**  
+📁 **Stores summaries** and raw snapshots as `.txt` files  
+🌐 **Serves summaries** via API to a React frontend  
+🕒 **Auto-updates** every 15 minutes (no button smashing needed anymore)
 
 * * *
 
 ## ✨ Why This Exists
 
-Because reading privacy policies is hell.  
-Because clicking buttons feels good.  
-Because the line between caveman and cybersecurity researcher is thinner than we think.
+- Because privacy policies are a wall of legal sadness
+    
+- Because you *should* know who’s watching
+    
+- Because your inner caveman deserves dignity and **automated surveillance of the surveillance**
+    
 
 * * *
 
 ## 🔧 Setup
 
-1.  Backend: Node.js + Express + Puppeteer + OpenAI
+**Backend**: Node.js + Express + Puppeteer + OpenAI  
+**Frontend**: Vite + React (hosted on Vercel)  
+**Deployment**:
+
+- Backend: [Railway](https://railway.app)
     
-2.  Frontend: Vite + React (hosted on Vercel)
+- Frontend: [Vercel](https://vercel.com)
     
-3.  Deployment:
-    
-    - Backend: Railway
-        
-    - Frontend: Vercel
-        
-4.  Environment: Add your `OPENAI_API_KEY` in a `.env` file like:
-    
-    OPENAI_API_KEY=sk-...
-    
-5.  Run it:
-    
-    npm install  
-    npm start
-    
+
+**Environment Vars**:
+
+ini
+
+CopyEdit
+
+`OPENAI_API_KEY=sk-...`
+
+Run it:
+
+bash
+
+CopyEdit
+
+`npm installnpm start`
 
 * * *
 
-## 🕸️ Scraped URLs
+## 🕸️ Tracked Platforms
 
-We currently track privacy policies from:
+We currently monitor policies from:
 
-- Meta (Facebook + Instagram)
+- **Facebook**
     
-- X (formerly Twitter, now just sadness)
+- **Instagram**
     
-- LinkedIn
+- **X (Twitter)**
     
-- Snap
+- **LinkedIn**
     
-- TikTok
+- **Snapchat**
     
-- Google
+- **TikTok**
     
-- Reddit
+- **Google**
     
-- Pinterest
+- **Reddit**
     
-- WhatsApp
+- **Pinterest**
+    
+- **WhatsApp**
     
 
-Want to add more? Add URLs to the `urls` array in `index.js` and hit the button like the mighty ancestor you are.
+Wanna add more?  
+Open `index.js`, chuck it in the `urls` array, and that’s it.  
+No deploy button. It’ll start monitoring like the little daemon it is.
 
 * * *
 
-## 🧠 Fun Facts
+## 🧠 How Smart Is It?
 
-- The button does *not* blindly re-scrape every time.
+- ✅ **Snapshot-aware**: Only scrapes and re-summarizes if something has changed.
     
-- It uses snapshot diffs. If nothing changed, nothing regenerates.
+- ✅ **Hardcoded titles**: No weird slugs or gibberish. Just clean names like “Google” and “Facebook.”
     
-- That means it's smart, but still lets you feel like a legend for clicking a thing.
+- ✅ **No frontend button anymore**: Summaries auto-load from existing `.txt` files.
+    
+- ✅ **Runs on a timer**: 15-minute scraping interval like clockwork. 
     
 
 * * *
 
 ## ⚠️ Disclaimer
 
-This is not legal advice. It’s not even good advice.  
-It’s a vibes-only service for keeping an eye on who's watching you.
+This is not legal advice.  
+It’s not even good advice.  
+It’s a VIBES-ONLY SERVICE for sniffing corporate behavior.
 
 * * *
 
 ## 🪓 Special Thanks
 
-- 🦍 Human muscle memory
-    
-- 🦴 The need to feel in control
-    
-- 🤖 GPT for decoding corporate legalese into something digestible
-    
+🦍 Human muscle memory  
+🧠 GPT for making legalese sound readable  
+🛠️ Railway + Vercel for making deploys feel like magic  
 
 * * *
 
-Built with rage, curiosity, and excessive caffeine.  
-**YOU PRESS BUTTON. DATA YIELD. WORLD SAFE.**
+Built with spite, curiosity, caffeine, and a small amount of dignity.  
+**You don’t press the button anymore. The button presses *itself*.**
