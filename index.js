@@ -25,11 +25,9 @@ const urls = [
   "https://www.whatsapp.com/legal/privacy-policy",
 ];
 
-// ✅ Ensure snapshots folder exists
+const failedMarker = "⚠️ This policy could not be scraped";
 const snapshotsDir = path.join(__dirname, "snapshots");
-if (!fs.existsSync(snapshotsDir)) {
-  fs.mkdirSync(snapshotsDir);
-}
+if (!fs.existsSync(snapshotsDir)) fs.mkdirSync(snapshotsDir);
 
 function slugify(url) {
   return url.replace(/[^a-zA-Z0-9]/g, "_");
@@ -54,19 +52,18 @@ async function summarize(text) {
   const prompt = `
 You are an AI that summarizes privacy policies into clear, consistent, and easy-to-read sections.
 
-If the privacy policy text appears incomplete, missing, or blocked by bot protection, **do not attempt to guess**.  
-Instead, return this fallback summary **exactly as shown**:
-
-⚠️ This policy could not be scraped or analyzed due to access restrictions, bot protection, or missing content.
-
-If the text is valid, also extract the "Last updated" or "Effective date" if possible. At the top of the summary, include:
+Please extract the "Last updated" or "Effective date" from the text if it exists. At the top of the summary, include:
 
 📅 Last Updated: [the date]
 
 If no date is found, write:
 📅 Last Updated: Not specified
 
-Then, always use the following exact structure and Markdown formatting:
+If you are unable to access any meaningful content, generate a fallback summary that includes this warning:
+
+⚠️ This policy could not be scraped due to network restrictions, bot blocking, or missing content. Please try again later or check manually.
+
+Always use the following exact structure and Markdown formatting:
 
 ---
 
@@ -120,6 +117,7 @@ Here is the full privacy policy text to summarize:\n\n${safeText}
 async function compareAndSummarize(url) {
   const slug = slugify(url);
   const currentPath = path.join(__dirname, `snapshots/${slug}.txt`);
+  const summaryPath = path.join(__dirname, `summary_${slug}.txt`);
 
   console.log(`\n🔍 Checking ${url}`);
   const newText = await scrapeText(url);
@@ -130,23 +128,30 @@ async function compareAndSummarize(url) {
     changed = newText.trim() !== oldText.trim();
   }
 
-  if (!changed) {
+  let forceRetry = false;
+  if (fs.existsSync(summaryPath)) {
+    const previousSummary = fs.readFileSync(summaryPath, "utf-8");
+    if (previousSummary.includes(failedMarker)) {
+      forceRetry = true;
+    }
+  }
+
+  if (!changed && !forceRetry) {
     console.log(`✅ No changes for ${url}`);
     return;
   }
 
-  console.log(`⚠️ Change detected!`);
+  console.log(`⚠️ Change detected or previous summary failed. Re-summarizing...`);
   const summary = await summarize(newText);
 
   fs.writeFileSync(currentPath, newText);
-  fs.writeFileSync(path.join(__dirname, `summary_${slug}.txt`), summary);
+  fs.writeFileSync(summaryPath, summary);
   console.log(`✅ Summary updated for ${url}`);
 }
 
-// 🚀 POST /scrape-now (responds immediately, runs in background)
+// POST /scrape-now
 app.post("/scrape-now", async (req, res) => {
-  res.json({ message: "Scrape started" }); // respond before waiting
-
+  res.json({ message: "Scrape started" });
   for (const url of urls) {
     try {
       await compareAndSummarize(url);
@@ -154,24 +159,19 @@ app.post("/scrape-now", async (req, res) => {
       console.error(`❌ Error scraping ${url}:`, err);
     }
   }
-
   console.log("✅ All scrapes finished");
 });
 
-// 📄 GET /summary/:slug
+// GET /summary/:slug
 app.get("/summary/:slug", (req, res) => {
   const slug = req.params.slug;
   const filePath = path.join(__dirname, `summary_${slug}.txt`);
-
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).json({ error: "Summary not found" });
-  }
-
+  if (!fs.existsSync(filePath)) return res.status(404).json({ error: "Summary not found" });
   const content = fs.readFileSync(filePath, "utf-8");
   res.send(content);
 });
 
-// 🗂️ GET /summaries
+// GET /summaries
 app.get("/summaries", (req, res) => {
   const files = fs.readdirSync(__dirname).filter(f => f.startsWith("summary_") && f.endsWith(".txt"));
 
@@ -200,8 +200,9 @@ app.get("/summaries", (req, res) => {
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`🚀 API listening on ${PORT}`));
 
-// Run scraping every 15 minutes
+// Scheduled scrape every 15 mins
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
+const RETRY_FAILED_EVERY = 56 * 1000;
 
 async function runScheduledScrape() {
   console.log("⏱️ Running scheduled scrape...");
@@ -211,5 +212,25 @@ async function runScheduledScrape() {
   console.log("✅ Scheduled scrape complete.");
 }
 
+// Retry any failed summaries separately
+async function retryFailedSummaries() {
+  for (const url of urls) {
+    const slug = slugify(url);
+    const summaryPath = path.join(__dirname, `summary_${slug}.txt`);
+    if (fs.existsSync(summaryPath)) {
+      const summary = fs.readFileSync(summaryPath, "utf-8");
+      if (summary.includes(failedMarker)) {
+        console.log(`🔁 Retrying failed summary: ${url}`);
+        try {
+          await compareAndSummarize(url);
+        } catch (err) {
+          console.error(`❌ Retry failed for ${url}:`, err);
+        }
+      }
+    }
+  }
+}
+
 runScheduledScrape();
 setInterval(runScheduledScrape, FIFTEEN_MINUTES);
+setInterval(retryFailedSummaries, RETRY_FAILED_EVERY);
