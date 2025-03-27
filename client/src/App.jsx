@@ -3,43 +3,32 @@ import axios from "axios";
 
 function App() {
   const [summaries, setSummaries] = useState([]);
-  const [status, setStatus] = useState("");
-
   const backendURL = "https://scraper-production-5468.up.railway.app";
 
-  const fetchSummaries = async () => {
-    try {
-      const res = await axios.get(`${backendURL}/summaries`);
+  useEffect(() => {
+    const fetchSummaries = async () => {
+      try {
+        const res = await axios.get(`${backendURL}/summaries`);
 
-      const fullSummaries = await Promise.all(res.data.map(async ({ slug, title }) => {
-        try {
-          const summaryRes = await axios.get(`${backendURL}/summary/${slug}`);
-          return { title, summary: summaryRes.data };
-        } catch {
-          return { title, summary: "⚠️ Failed to fetch summary." };
-        }
-      }));
+        const fullSummaries = await Promise.all(
+          res.data.map(async ({ slug, title }) => {
+            try {
+              const summaryRes = await axios.get(`${backendURL}/summary/${slug}`);
+              return { title, summary: summaryRes.data };
+            } catch {
+              return { title, summary: "⚠️ Failed to fetch summary." };
+            }
+          })
+        );
 
-      setSummaries(fullSummaries);
-    } catch (err) {
-      console.error("❌ Failed to load summaries", err);
-    }
-  };
+        setSummaries(fullSummaries);
+      } catch (err) {
+        console.error("❌ Failed to load summaries", err);
+      }
+    };
 
-  const triggerScrape = () => {
-    setStatus("Scraping...");
-    axios.post(`${backendURL}/scrape-now`)
-      .then(() => {
-        setStatus("Scrape complete. Updating summaries...");
-        setTimeout(() => {
-          fetchSummaries();
-          setStatus("");
-        }, 1500);
-      })
-      .catch(() => {
-        setStatus("Scrape failed.");
-      });
-  };
+    fetchSummaries();
+  }, []);
 
   return (
     <div style={{
@@ -50,26 +39,6 @@ function App() {
       fontFamily: "monospace",
     }}>
       <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>🕵️ PolicyPal</h1>
-
-      <div style={{ marginBottom: "2rem" }}>
-        <button
-          onClick={triggerScrape}
-          style={{
-            padding: "0.5rem 1rem",
-            borderRadius: "0.4rem",
-            border: "none",
-            backgroundColor: "#89ddff",
-            color: "#000",
-            fontWeight: "bold",
-            cursor: "pointer",
-          }}
-        >
-          Scrape Now
-        </button>
-        {status && (
-          <span style={{ marginLeft: "1rem", color: "#ccc" }}>{status}</span>
-        )}
-      </div>
 
       {summaries.map(({ title, summary }, i) => (
         <div key={i} style={{ marginBottom: "2rem" }}>
