@@ -164,9 +164,24 @@ app.get("/summaries", (req, res) => {
   const files = fs.readdirSync(__dirname).filter(f => f.startsWith("summary_") && f.endsWith(".txt"));
   const summaries = files.map(file => {
     const slug = file.replace("summary_", "").replace(".txt", "");
-    const title = slug.replace(/https?_+/g, "").replace(/_+/g, " ").trim();
+    let title = slug;
+  
+    // Try to make it readable
+    title = title.replace(/https?_+www_+/g, "");
+    title = title.replace(/https?_+/g, "");
+    title = title.replace(/_/g, " ");
+    title = title.replace(/com/g, ".com");
+    title = title.replace(/en us/g, "US");
+    title = title.replace(/\s+/g, " ").trim();
+  
+    // Capitalize first letter of each word
+    title = title
+      .split(" ")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  
     return { slug, title };
-  });
+  });  
   res.json(summaries);
 });
 
