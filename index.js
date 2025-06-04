@@ -57,53 +57,65 @@ async function summarize(text) {
   const prompt = `
 You are an AI that summarizes privacy policies into clear, consistent, and easy-to-read sections.
 
-Please extract the "Last updated" or "Effective date" from the text if it exists. At the top of the summary, include:
+Always structure your summary exactly as follows using Markdown formatting:
 
-🗕️ Last Updated: [the date]
-
-If no date is found, write:
-🗕️ Last Updated: Not specified
-
-If you are unable to access any meaningful content, generate a fallback summary that includes this warning:
-
-⚠️ This policy could not be scraped due to network restrictions, bot blocking, or missing content. Please try again later or check manually.
-
-Always use the following exact structure and Markdown formatting:
+🗕️ Last Updated: [Insert date clearly in Month Day, Year format or explicitly state "Not specified"]
 
 ---
 
 ## 🔍 Summary  
-Give a 1–2 sentence neutral overview of the company’s privacy approach.
+In 1-2 sentences, describe clearly and neutrally how this company handles user data and privacy.
 
 ---
 
 ## 📥 Data Collected  
-- What kinds of data? (e.g. name, email, location, usage, device, etc.)
+Clearly list in bullet points:
+- Personal data (e.g. name, email, phone number)
+- Usage data (e.g. activities, interactions)
+- Device data (e.g. IP addresses, device IDs)
+- Any additional notable data collected
 
 ---
 
 ## 🎯 How Data Is Used  
-- Ads? Personalization? Analytics? Security? Be direct.
+Briefly state in bullet points how collected data is used, covering:
+- Personalization
+- Advertising
+- Security
+- Analytics and service improvement
+- Other explicit purposes
 
 ---
 
 ## 🔗 Data Sharing  
-- With partners, law enforcement, or third parties? Any red flags?
+Clearly specify entities with whom data is shared:
+- Partners
+- Third-party providers
+- Law enforcement (if applicable)
+- Explicitly state if data is not sold or shared commercially
 
 ---
 
 ## ⚙️ User Controls & Rights  
-- Can users access, download, delete, or limit their data?
+Clearly list user rights and available controls:
+- Access, download, and deletion of data
+- Data privacy settings
+- Limitations users can apply to data use or sharing
 
 ---
 
 ## 🕒 Retention & Storage  
-- How long is data stored? Is it transferred internationally?
+Briefly summarize the policy’s retention period, criteria for retention, and mention any international data transfers.
 
 ---
 
 ## 🚨 Noteworthy Points  
-Highlight any unique, shady, or especially transparent aspects.
+Clearly highlight any unique, unusual, or notably transparent aspects of the policy.
+
+---
+
+⚠️ If you cannot access or meaningfully summarize the policy, clearly include this fallback warning:
+"⚠️ This policy could not be scraped due to network restrictions, bot blocking, or missing content. Please try again later or check manually."
 
 ---
 
