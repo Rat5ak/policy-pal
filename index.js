@@ -58,6 +58,7 @@ async function summarize(text) {
 You are an AI that summarizes privacy policies into clear, consistent, and easy-to-read sections.
 
 Always structure your summary exactly as follows using Markdown formatting:
+Use only the following Markdown conventions:\n- Use \`##\` for all section headings (no bolding or other heading levels)\n- Use \`-\` for all bullet points (do not use asterisks or other symbols)\n- Leave exactly one blank line between sections\n
 
 🗕️ Last Updated: [Insert date clearly in Month Day, Year format or explicitly state "Not specified"]
 
@@ -130,6 +131,8 @@ Here is the full privacy policy text to summarize:\n\n${safeText}
 
   const summary = response.choices[0].message.content;
   const reviewed = await reviewSummary(summary);
+const cleaned = reviewed.trim().replace(/\n{3,}/g, "\n\n");
+return cleaned;
   return reviewed;
 }
 
