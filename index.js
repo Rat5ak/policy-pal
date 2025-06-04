@@ -36,7 +36,12 @@ function slugify(url) {
 async function scrapeText(url) {
   const browser = await puppeteer.launch({
     headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    ignoreHTTPSErrors: true,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--ignore-certificate-errors",
+    ],
   });
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
